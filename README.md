@@ -1,2 +1,3 @@
 # tictactoe
-a simple game using javascript and jquery
+a simple game using javascript and jquery and minmax algorithm
+
