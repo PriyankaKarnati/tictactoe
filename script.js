@@ -74,7 +74,7 @@ function gameOver(gameWon){
 }
 
 
-//basic AI without min-max algorithm
+//basic AI without minimax algorithm
 function declareWinner(who){
 	document.querySelector(".endgame").style.display = "block";
 	document.querySelector(".endgame .text").innerText = who;
@@ -84,7 +84,8 @@ function emptySquare(){
 	return origBoard.filter(e=> typeof e == 'number');
 }
 function bestMove(){
-	return emptySquare()[0];//return first index from the empty square
+	//return emptySquare()[0];//return first index from the empty square
+	return minimax(origBoard,aiPlayer).index;
 }
 
 function checkTie(){
@@ -97,4 +98,61 @@ function checkTie(){
 		return true;
 	}
 	return false;
+}
+
+//minimax algorithm
+
+function minimax(board,player){
+	var availSpots = emptySquare(board);
+	if(checkWin(board,player)){
+		return {score: -10};
+	}
+	else if(checkWin(board,aiPlayer)){
+		return {score: 10};
+	}
+	else if(availSpots.length==0){
+		return {score: 0};
+	}
+
+	var moves = [];
+	for(var i=0;i<availSpots.length;i++){
+		var mov = {};
+		mov.index = board[availSpots[i]];
+		board[availSpots[i]] = player;
+		if(player == aiPlayer){
+			var result = minimax(board,humanPlayer);
+			mov.score = result.score;
+		}
+		else{
+			var result = minimax(board,aiPlayer);
+			mov.score = result.score;
+		}
+
+		board[availSpots[i]] = mov.index;
+		moves.push(mov);
+	}
+
+	var bestM;
+	if(player==aiPlayer){
+		var bestScore = -10000;
+		for(var i = 0;i<moves.length;i++){
+			if(moves[i].score>bestScore){
+				bestScore = moves[i].score;
+				bestM = i;
+			}
+		}
+	}
+	else{
+		var bestScore = 10000;
+		for(var i = 0;i<moves.length;i++){
+			if(moves[i].score<bestScore){
+				bestScore = moves[i].score;
+				bestM = i;
+			}
+		}
+
+	}
+	return moves[bestM];
+
+
 }
